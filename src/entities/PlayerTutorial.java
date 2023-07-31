@@ -1,7 +1,6 @@
 package entities;
 
 import static utils.Constants.PlayerConstants.*;
-import static utils.Constants.Projectiles.*;
 import static utils.HelpMethods.*;
 import static utils.Constants.*;
 import static utils.Constants.Directions.*;
