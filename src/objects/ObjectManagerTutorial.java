@@ -179,7 +179,6 @@ public class ObjectManagerTutorial {
             if (p.isActive()) {
                 p.updatePos();
                 if (p.getHitbox().intersects(player.getHitbox())) {
-                    // TODO: change cannon hit after testing
                     player.changeHealth(PROJECTILE_DMG, p);
                     p.setActive(false);
                 } else if (IsProjectileHittingLevel(p, lvlData))

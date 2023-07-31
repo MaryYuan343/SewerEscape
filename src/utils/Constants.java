@@ -32,8 +32,7 @@ public class Constants {
         public static final int CANNON_BALL_HEIGHT = (int) (Game.SCALE * CANNON_BALL_DEFAULT_HEIGHT);
         public static final float SPEED = 0.85f * Game.SCALE;
 
-        // TODO: change damage after testing
-        public static final int PROJECTILE_DMG = -2;
+        public static final int PROJECTILE_DMG = -15;
     }
 
     public static class ObjectConstants {
@@ -205,12 +204,11 @@ public class Constants {
         }
 
         public static int GetMaxHealth(int enemy_type) {
-            // TODO: change later after stupid maggie plays
             switch (enemy_type) {
                 case CRABBY:
-                    return 10;
+                    return 25;
                 case PINKSTAR, SHARK:
-                    return 5;
+                    return 30;
                 default:
                     return 1;
             }
@@ -219,12 +217,11 @@ public class Constants {
         public static int GetEnemyDmg(int enemy_type) {
             switch (enemy_type) {
                 case CRABBY:
-                    // TODO: change damage after maggie plays cuz she has skill issues
-                    return 1;
+                    return 5;
                 case PINKSTAR:
-                    return 1;
+                    return 10;
                 case SHARK:
-                    return 1;
+                    return 15;
                 default:
                     return 0;
             }

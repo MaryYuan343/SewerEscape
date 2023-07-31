@@ -26,7 +26,6 @@ public class LevelCompletedOverlayTutorial {
     }
 
     private void initButtons() {
-        // TODO: adjust menuX
         int menuX = (int) (390 * Game.SCALE);
         int nextX = (int) (445 * Game.SCALE);
         int y = (int) (195 * Game.SCALE);

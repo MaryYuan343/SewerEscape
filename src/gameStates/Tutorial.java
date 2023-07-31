@@ -72,19 +72,16 @@ public class Tutorial extends State implements StateMethods {
         initClouds();
         loadDialogue();
         calcLvlOffset();
-        // TODO: change it to load tutorial
         loadTutorial();
     }
 
     private void loadTutorial() {
-        // TODO: write this method
         enemyManagerT.loadEnemies(levelManager.getTutorial());
         objectManagerT.loadObjects(levelManager.getTutorial());
     }
 
     private void initClasses() {
         levelManager = new LevelManager(game);
-        // TODO: idk how to fix this tbh
         enemyManagerT = new EnemyManagerTutorial(this);
         objectManagerT = new ObjectManagerTutorial(this);
 
@@ -94,7 +91,7 @@ public class Tutorial extends State implements StateMethods {
 
         pauseOverlayT = new PausedOverlayTutorial(this);
         gameOverOverlayT = new GameOverOverlayTutorial(this);
-        // TODO: write levelcompleted
+
         levelCompletedOverlayT = new LevelCompletedOverlayTutorial(this);
         gameCompletedOverlayT = new GameCompletedOverlayTutorial(this);
 
@@ -139,7 +136,6 @@ public class Tutorial extends State implements StateMethods {
     }
 
     private void calcLvlOffset() {
-        // TODO: write another method in level manager that gets the tutorial
         maxLvlOffsetX = levelManager.getTutorial().getLvlOffset();
     }
 

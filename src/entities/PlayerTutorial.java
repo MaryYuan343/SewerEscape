@@ -137,8 +137,7 @@ public class PlayerTutorial extends Entity {
 
         if (state == HIT) {
             if (aniIndex <= GetSpriteAmount(state) - 3)
-                // TODO: change after testing
-                pushBack(pushBackDir, lvlData, 0f);
+                pushBack(pushBackDir, lvlData, 0.5f);
             updatePushBackDrawOffset();
         } else
             updatePos();
@@ -459,7 +458,7 @@ public class PlayerTutorial extends Entity {
         statusBarImg = LoadSave.GetSpriteAtlas(LoadSave.STATUS_BAR);
     }
 
-    // TODO: find out why there's only one usage
+
     public void loadLvlData(int[][] lvlData) {
         this.lvlData = lvlData;
         if (!IsEntityOnFloor(hitbox, lvlData))
@@ -531,10 +530,9 @@ public class PlayerTutorial extends Entity {
     public void powerAttack() {
         if (powerAttackActive)
             return;
-        // TODO: change value
-        if (powerValue >= 60) {
+        if (powerValue >= 100) {
             powerAttackActive = true;
-            changePower(-60);
+            changePower(-100);
         }
 
     }
