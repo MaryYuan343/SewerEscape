@@ -82,7 +82,7 @@ public class GameOverOverlayTutorial {
         } else if (isIn(play, e))
             if (play.isMousePressed()) {
                 tutorial.resetAll();
-                tutorial.getGame().getAudioPlayer().setLevelSong(tutorial.getLevelManager().getLevelIndex());
+                tutorial.getGame().getAudioPlayer().setLevelSong(1);
             }
 
         menu.resetBools();

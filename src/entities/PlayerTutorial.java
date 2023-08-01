@@ -164,7 +164,7 @@ public class PlayerTutorial extends Entity {
     }
 
     private void checkInsideWater() {
-        if (IsEntityInWater(hitbox, tutorial.getLevelManager().getCurrentLevel().getLevelData()))
+        if (IsEntityInWater(hitbox, tutorial.getLevelManager().getTutorial().getLevelData()))
             currentHealth = 0;
     }
 

@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import java.util.Arrays;
+import java.util.List;
 import javax.imageio.ImageIO;
 
 public class LoadSave {
@@ -51,6 +53,7 @@ public class LoadSave {
     public static final String DOOR_CLOSE = "door_close.png";
     public static final String DOOR_OPEN = "door_open.png";
     public static final String TUTORIAL = "tutorial.png";
+    public static final String TUT_START = "tut_start.png";
 
     public static BufferedImage GetSpriteAtlas(String fileName) {
         BufferedImage img = null;
@@ -70,36 +73,55 @@ public class LoadSave {
         return img;
     }
 
+//    public static BufferedImage[] GetAllLevels() {
+//        URL url = LoadSave.class.getResource("/lvls");
+//        File file = null;
+//
+//        try {
+//            file = new File(url.toURI());
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+//
+//        File[] files = file.listFiles();
+//        File[] filesSorted = new File[files.length];
+//
+//        for (int i = 0; i < filesSorted.length; i++)
+//            for (int j = 0; j < files.length; j++) {
+//                if (files[j].getName().equals((i + 1) + ".png"))
+//                    filesSorted[i] = files[j];
+//
+//            }
+//
+//        BufferedImage[] imgs = new BufferedImage[filesSorted.length];
+//
+//        for (int i = 0; i < imgs.length; i++)
+//            try {
+//                imgs[i] = ImageIO.read(filesSorted[i]);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//        return imgs;
+//    }
+
     public static BufferedImage[] GetAllLevels() {
-        URL url = LoadSave.class.getResource("/lvls");
-        File file = null;
+        List<String> levelNames = Arrays.asList("1.png", "2.png", "3.png", "4.png", "5.png", "6.png",
+                "7.png", "8.png");
+        BufferedImage[] levels = new BufferedImage[levelNames.size()];
 
-        try {
-            file = new File(url.toURI());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-        File[] files = file.listFiles();
-        File[] filesSorted = new File[files.length];
-
-        for (int i = 0; i < filesSorted.length; i++)
-            for (int j = 0; j < files.length; j++) {
-                if (files[j].getName().equals((i + 1) + ".png"))
-                    filesSorted[i] = files[j];
-
-            }
-
-        BufferedImage[] imgs = new BufferedImage[filesSorted.length];
-
-        for (int i = 0; i < imgs.length; i++)
-            try {
-                imgs[i] = ImageIO.read(filesSorted[i]);
+        for(int i = 0; i < levels.length; i++) {
+            try (InputStream is = LoadSave.class.getResourceAsStream("/lvls/" + levelNames.get(i))) {
+                if (is == null) {
+                    System.err.println("File not found:\n" + levelNames.get(i));
+                    System.exit(1);
+                }
+                levels[i] = ImageIO.read(is);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-        return imgs;
+        }
+        return levels;
     }
 
 }

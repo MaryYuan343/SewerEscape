@@ -11,7 +11,6 @@ import static utils.Constants.Environment.SMALL_CLOUD_WIDTH;
 
 import effects.DialogueEffect;
 import entities.EnemyManagerTutorial;
-import entities.Player;
 import entities.PlayerTutorial;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -22,31 +21,30 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 import levels.LevelManager;
+import levels.TutManager;
 import main.Game;
-import objects.Key;
-import objects.ObjectManager;
 import objects.ObjectManagerTutorial;
-import ui.GameCompletedOverlay;
 import ui.GameCompletedOverlayTutorial;
 import ui.GameOverOverlayTutorial;
-import ui.LevelCompletedOverlay;
 import ui.LevelCompletedOverlayTutorial;
-import ui.PausedOverlay;
 import ui.PausedOverlayTutorial;
+import ui.TutBeginOverlay;
 import utils.LoadSave;
 
 public class Tutorial extends State implements StateMethods {
 
     private PlayerTutorial player;
-    private LevelManager levelManager;
+    private TutManager tutManager;
     private EnemyManagerTutorial enemyManagerT;
     private ObjectManagerTutorial objectManagerT;
     private PausedOverlayTutorial pauseOverlayT;
+    private TutBeginOverlay tutBeginOverlay;
     private GameOverOverlayTutorial gameOverOverlayT;
     private GameCompletedOverlayTutorial gameCompletedOverlayT;
     private LevelCompletedOverlayTutorial levelCompletedOverlayT;
 
-    private boolean paused = true;
+    private boolean paused;
+    private boolean tutStart = true;
 
     private int xLvlOffset;
     private int leftBorder = (int) (0.25 * Game.GAME_WIDTH);
@@ -76,20 +74,21 @@ public class Tutorial extends State implements StateMethods {
     }
 
     private void loadTutorial() {
-        enemyManagerT.loadEnemies(levelManager.getTutorial());
-        objectManagerT.loadObjects(levelManager.getTutorial());
+        enemyManagerT.loadEnemies(tutManager.getTutorial());
+        objectManagerT.loadObjects(tutManager.getTutorial());
     }
 
     private void initClasses() {
-        levelManager = new LevelManager(game);
+        tutManager = new TutManager(game);
         enemyManagerT = new EnemyManagerTutorial(this);
         objectManagerT = new ObjectManagerTutorial(this);
 
         player = new PlayerTutorial(200, 200, (int) (64 * Game.SCALE), (int) (40 * Game.SCALE), this);
-        player.loadLvlData(levelManager.getTutorial().getLevelData());
-        player.setSpawn(levelManager.getTutorial().getPlayerSpawn());
+        player.loadLvlData(tutManager.getTutorial().getLevelData());
+        player.setSpawn(tutManager.getTutorial().getPlayerSpawn());
 
         pauseOverlayT = new PausedOverlayTutorial(this);
+        tutBeginOverlay = new TutBeginOverlay(this);
         gameOverOverlayT = new GameOverOverlayTutorial(this);
 
         levelCompletedOverlayT = new LevelCompletedOverlayTutorial(this);
@@ -136,13 +135,15 @@ public class Tutorial extends State implements StateMethods {
     }
 
     private void calcLvlOffset() {
-        maxLvlOffsetX = levelManager.getTutorial().getLvlOffset();
+        maxLvlOffsetX = tutManager.getTutorial().getLvlOffset();
     }
 
     @Override
     public void update() {
         if (paused)
             pauseOverlayT.update();
+        else if (tutStart)
+            tutBeginOverlay.update();
         else if (lvlCompleted)
             levelCompletedOverlayT.update();
         else if (gameCompleted)
@@ -154,10 +155,10 @@ public class Tutorial extends State implements StateMethods {
         }
         else {
             updateDialogue();
-            levelManager.update();
-            objectManagerT.update(levelManager.getTutorial().getLevelData(), player);
+            tutManager.update();
+            objectManagerT.update(tutManager.getTutorial().getLevelData(), player);
             player.update();
-            enemyManagerT.update(levelManager.getTutorial().getLevelData());
+            enemyManagerT.update(tutManager.getTutorial().getLevelData());
             checkCloseToBorder();
 
         }
@@ -169,7 +170,7 @@ public class Tutorial extends State implements StateMethods {
 
         drawClouds(g);
 
-        levelManager.drawTutorial(g, xLvlOffset);
+        tutManager.drawTutorial(g, xLvlOffset);
         enemyManagerT.draw(g, xLvlOffset);
         player.render(g, xLvlOffset);
         objectManagerT.draw(g, xLvlOffset);
@@ -180,7 +181,13 @@ public class Tutorial extends State implements StateMethods {
             g.setColor(new Color(0, 0, 0, 150));
             g.fillRect(0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT);
             pauseOverlayT.draw(g);
-        } else if (gameOver)
+        }
+        else if (tutStart){
+            g.setColor(new Color(0, 0, 0, 150));
+            g.fillRect(0, 0, Game.GAME_WIDTH, Game.GAME_HEIGHT);
+            tutBeginOverlay.draw(g);
+        }
+        else if (gameOver)
             gameOverOverlayT.draw(g);
         else if (lvlCompleted)
             levelCompletedOverlayT.draw(g);
@@ -240,6 +247,7 @@ public class Tutorial extends State implements StateMethods {
         gameOver = false;
         lvlCompleted = false;
         paused = false;
+        tutStart = true;
 
         playerDying = false;
 
@@ -318,9 +326,14 @@ public class Tutorial extends State implements StateMethods {
     }
 
     public void mouseDragged(MouseEvent e) {
-        if (!gameOver && !gameCompleted)
-            if (paused)
+        if (!gameOver && !gameCompleted) {
+            if (paused) {
                 pauseOverlayT.mouseDragged(e);
+            }
+            if (tutStart) {
+                tutBeginOverlay.mouseDragged(e);
+            }
+        }
     }
 
     @Override
@@ -339,6 +352,8 @@ public class Tutorial extends State implements StateMethods {
             gameOverOverlayT.mousePressed(e);
         else if (paused)
             pauseOverlayT.mousePressed(e);
+        else if (tutStart)
+            tutBeginOverlay.mousePressed(e);
         else if (lvlCompleted)
             levelCompletedOverlayT.mousePressed(e);
         else if (gameCompleted)
@@ -352,6 +367,8 @@ public class Tutorial extends State implements StateMethods {
             gameOverOverlayT.mouseReleased(e);
         else if (paused)
             pauseOverlayT.mouseReleased(e);
+        else if (tutStart)
+            tutBeginOverlay.mouseReleased(e);
         else if (lvlCompleted)
             levelCompletedOverlayT.mouseReleased(e);
         else if (gameCompleted)
@@ -364,6 +381,8 @@ public class Tutorial extends State implements StateMethods {
             gameOverOverlayT.mouseMoved(e);
         else if (paused)
             pauseOverlayT.mouseMoved(e);
+        else if (tutStart)
+            tutBeginOverlay.mouseMoved(e);
         else if (lvlCompleted)
             levelCompletedOverlayT.mouseMoved(e);
         else if (gameCompleted)
@@ -376,6 +395,9 @@ public class Tutorial extends State implements StateMethods {
 
     public void unpauseGame() {
         paused = false;
+    }
+    public void notStart(){
+        tutStart = false;
     }
 
     public void windowFocusLost() {
@@ -390,8 +412,8 @@ public class Tutorial extends State implements StateMethods {
         return player;
     }
 
-    public LevelManager getLevelManager() {
-        return levelManager;
+    public TutManager getLevelManager() {
+        return tutManager;
     }
 
     public void setGameCompleted(boolean gameCompleted){
